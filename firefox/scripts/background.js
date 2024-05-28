@@ -43,50 +43,46 @@ browser.alarms.onAlarm.addListener((alarm) => {
 });
 
 // handle messages from main/foreground script
-browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (message.type === "get-socket-state") {
-    sendResponse({ isConnected });
-  } else if (message.type === "get-tabs") {
-    channel
-      .push("get-tabs", {})
-      .receive("ok", (payload) =>
-        browser.runtime.sendMessage({ type: "tabs-response", payload })
-      )
-      .receive("error", (err) => console.log("phoenix errored", err))
-      .receive("timeout", () => console.log("timed out pushing"));
-  } else if (message.type === "bookmark-current-tab") {
-    const tabs = await getCurrentTab();
-    if (tabs.length > 0) {
-      const tab = tabs[0];
-      if (!tab.url.startsWith("http"))
-        return browser.runtime.sendMessage({
-          type: "bookmark-response",
-          response: false,
-        });
-      channel
-        .push("firefox:bookmark-tab", { url: tab.url, title: tab.title })
-        .receive("ok", () => {
-          browser.runtime.sendMessage({
-            type: "bookmark-response",
-            response: true,
-          });
-        })
-        .receive("error", (err) => {
-          console.error(err);
-          browser.runtime.sendMessage({
-            type: "bookmark-response",
-            response: true,
-          });
-        });
-    } else {
-      return browser.runtime.sendMessage({
-        type: "bookmark-response",
-        response: false,
-      });
-    }
+browser.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
+  const { type, _response } = message;
+  switch (type) {
+    case "get-socket-state":
+      return returnSocketState();
+    case "get-tabs":
+      return handleGetTabs();
+    case "bookmark-current-tab":
+      return bookmarkCurrentTab();
   }
-  // console.log(message, sender);
 });
+
+function returnSocketState() {
+  sendMessage("connection-state", { isConnected });
+}
+
+function handleGetTabs() {
+  channel
+    .push("get-tabs", {})
+    .receive("ok", (payload) => sendMessage("tabs-response", payload))
+    .receive("error", (err) => console.log("phoenix errored", err))
+    .receive("timeout", () => console.log("timed out pushing"));
+}
+
+async function bookmarkCurrentTab() {
+  const tab = await getCurrentTab();
+  if (tab) {
+    channel
+      .push("firefox:bookmark-tab", { url: tab.url, title: tab.title })
+      .receive("ok", () => {
+        sendMessage("bookmark-response", true);
+      })
+      .receive("error", (err) => {
+        console.error(err);
+        sendMessage("bookmark-response", false);
+      });
+  } else {
+    sendMessage("bookmark-response", false);
+  }
+}
 
 ///////// helpers
 
@@ -108,13 +104,10 @@ function joinChannel(socket) {
   return channel;
 }
 
-function handlePresence(e) {
-  console.log(e);
-  console.log(
-    presence.list((id, metas) => {
-      console.log(id, metas);
-    })
-  );
+function handlePresence() {
+  presence.list((id, metas) => {
+    console.log(id, metas);
+  });
 }
 
 // tabs
@@ -131,5 +124,14 @@ function filterAndTransformTabs(tabs) {
 }
 
 async function getCurrentTab() {
-  return browser.tabs.query({ active: true, currentWindow: true });
+  const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+  if (tabs.length > 0 && tabs[0].url.startsWith("http")) {
+    return tabs[0];
+  } else {
+    return null;
+  }
+}
+
+function sendMessage(type, payload = {}) {
+  return browser.runtime.sendMessage({ type, payload });
 }

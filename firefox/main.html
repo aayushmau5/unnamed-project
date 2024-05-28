@@ -17,7 +17,7 @@
       text-decoration: underline;
     }
 
-    #bookmark {
+    #bookmark-button {
       background-color: transparent;
       font-family: inherit;
       font-size: 12px;
@@ -25,9 +25,27 @@
       color: white;
       border: 1px solid white;
       border-radius: 5px;
+      margin-top: 10px;
     }
 
-    #bookmark:hover {
+    #bookmark-button:hover {
+      opacity: 0.8;
+    }
+
+    #tabs-container {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 5px;
+    }
+
+    #tabs-container a {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    #tabs-container a:hover {
       opacity: 0.8;
     }
   </style>
@@ -35,7 +53,8 @@
     <p class="heading">phoenix.aayushsahu.com</p>
     <p>isConnected? <span id="socket-connection-state">false</span></p>
     <div id="response"></div>
-    <button id="bookmark">bookmark current tab</button>
+    <div id="tabs-container"></div>
+    <button id="bookmark-button">bookmark current tab</button>
     <script src="scripts/main.js"></script>
   </body>
 </html>
