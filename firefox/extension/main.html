@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phoenix</title>
+  </head>
+  <style>
+    body {
+      padding: 10px;
+      background-color: #1f1f1f;
+      font-family: "Input", monospace;
+      color: white;
+    }
+
+    .heading {
+      text-decoration: underline;
+    }
+
+    #bookmark {
+      background-color: transparent;
+      font-family: inherit;
+      font-size: 12px;
+      padding: 4px;
+      color: white;
+      border: 1px solid white;
+      border-radius: 5px;
+    }
+
+    #bookmark:hover {
+      opacity: 0.8;
+    }
+  </style>
+  <body>
+    <p class="heading">phoenix.aayushsahu.com</p>
+    <p>isConnected? <span id="socket-connection-state">false</span></p>
+    <div id="response"></div>
+    <button id="bookmark">bookmark current tab</button>
+    <script src="scripts/main.js"></script>
+  </body>
+</html>
