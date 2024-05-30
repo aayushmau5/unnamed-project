@@ -1,13 +1,17 @@
+importScripts("phoenix.min.js");
+
 let socket = null;
 let channel = null;
 let presence = null;
 let isConnected = false;
 let browserId = null;
 
+let browser = chrome;
+
 // on init
 browser.runtime.onInstalled.addListener(async () => {
   const info = await browser.runtime.getPlatformInfo();
-  browserId = `firefox_${info.os}`;
+  browserId = `brave_${info.os}`;
   socket = connectSocket();
   socket.onOpen(() => {
     isConnected = true;
@@ -74,7 +78,7 @@ async function bookmarkCurrentTab() {
   const tab = await getCurrentTab();
   if (tab) {
     channel
-      .push("firefox:bookmark-tab", { url: tab.url, title: tab.title })
+      .push("brave:bookmark-tab", { url: tab.url, title: tab.title })
       .receive("ok", () => {
         sendMessage("bookmark-response", true);
       })
@@ -97,7 +101,7 @@ function connectSocket() {
 
 function joinChannel(socket) {
   const channel = socket.channel("extension", {
-    browser: "firefox",
+    browser: "brave",
     id: browserId,
   });
 

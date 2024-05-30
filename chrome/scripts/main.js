@@ -4,6 +4,8 @@ const socketConnectionStatusContainer = document.getElementById(
 const bookmarkButton = document.getElementById("bookmark-button");
 const tabsContainer = document.getElementById("tabs-container");
 
+let browser = chrome;
+
 init();
 initMessageHandler();
 runTimer();

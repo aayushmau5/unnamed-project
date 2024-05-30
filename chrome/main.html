@@ -11,6 +11,7 @@
       background-color: #1f1f1f;
       font-family: "Input", monospace;
       color: white;
+      min-width: 500px;
     }
 
     .heading {
@@ -49,6 +50,13 @@
   <body>
     <p class="heading">phoenix.aayushsahu.com</p>
     <p>isConnected? <span id="socket-connection-state">false</span></p>
+    <div>
+      <span style="font-weight: bold; font-size: 14px">Connected clients:</span>
+      <ul id="connected-clients">
+        <li>firefox</li>
+        <li>brave</li>
+      </ul>
+    </div>
     <div id="response"></div>
     <p
       style="
