@@ -71,19 +71,21 @@ function handleGetTabs() {
 }
 
 async function bookmarkCurrentTab() {
+  const messageType = "bookmark-response";
   const tab = await getCurrentTab();
   if (tab) {
     channel
-      .push("firefox:bookmark-tab", { url: tab.url, title: tab.title })
-      .receive("ok", () => {
-        sendMessage("bookmark-response", true);
+      .push("bookmark-tab", { url: tab.url, title: tab.title })
+      .receive("ok", (data) => {
+        if (data.status === "ok") return sendMessage(messageType, true);
+        sendMessage(messageType, false);
       })
       .receive("error", (err) => {
         console.error(err);
-        sendMessage("bookmark-response", false);
+        sendMessage(messageType, false);
       });
   } else {
-    sendMessage("bookmark-response", false);
+    sendMessage(messageType, false);
   }
 }
 

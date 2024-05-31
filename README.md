@@ -1,4 +1,6 @@
-# firefox
+# unnamed-extension
+
+## firefox
 
 - as soon as the extension is loaded, don't connect to the server yet
 - have the option to connect and disconnect
@@ -10,3 +12,13 @@
 - otherwise, look for tab events(need to check). on tab event, if connected(and persistent), send data.
 
 - if this works, there might be stuff for future ideas
+
+## TODOs
+
+- merge into one extension codebase
+- dictate socket connect/disconnect through main.js
+- add to intersting link(or maybe categories?)
+- context menu entry
+  - future idea: paragraph bookmarks
+- quick access(pretty easy).
+- tabs(quick access, cross-browser sync, scribble?)
