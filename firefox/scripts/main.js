@@ -8,15 +8,16 @@ const qaContainer = document.getElementById("quick-access");
 const tabsButton = document.getElementById("tabs-button");
 const tabsParent = document.getElementById("tabs-parent");
 const clientsUl = document.getElementById("connected-clients");
+const connectionButton = document.getElementById("connection-button");
+
+let isConnected = false;
 
 init();
-initMessageHandler();
-runTimer();
-
-// Utils
 
 async function init() {
   sendMessage("get-socket-state");
+  initMessageHandler();
+  runTimer();
 
   // bookmark
   bookmarkButton.addEventListener("click", () => {
@@ -32,12 +33,15 @@ async function init() {
     qaContainer.style = "display: none;";
     tabsParent.style = "display: block;";
   });
+
+  connectionButton.addEventListener("click", () => {
+    sendMessage("socket-connection");
+  });
 }
 
 function initMessageHandler() {
   browser.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
     const { type, payload } = message;
-    console.log(payload);
     switch (type) {
       case "tabs-response":
         return handleTabs(payload);
@@ -68,9 +72,15 @@ function handleBookmarkResponse(payload) {
 }
 
 function handleConnectionState(payload) {
-  socketConnectionStatusContainer.innerText = payload
-    ? payload.isConnected
-    : false;
+  isConnected = payload ? payload.isConnected : false;
+
+  socketConnectionStatusContainer.innerText = `${isConnected}`;
+
+  if (isConnected) {
+    connectionButton.innerText = "disconnect";
+  } else {
+    connectionButton.innerText = "connect";
+  }
 }
 
 function showConnectedClients(payload) {
@@ -88,12 +98,12 @@ function showConnectedClients(payload) {
 }
 
 function runTimer() {
-  setInterval(function () {
-    sendMessage("get-tabs");
-  }, 2000);
-
-  setInterval(function () {
-    sendMessage("get-connected-clients");
+  setInterval(() => {
+    if (isConnected) {
+      sendMessage("get-tabs");
+      sendMessage("get-connected-clients");
+    }
+    sendMessage("get-socket-state");
   }, 2000);
 }
 

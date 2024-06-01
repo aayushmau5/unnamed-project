@@ -8,15 +8,7 @@ let browserId = null;
 browser.runtime.onInstalled.addListener(async () => {
   const info = await browser.runtime.getPlatformInfo();
   browserId = `firefox_${info.os}`;
-  socket = connectSocket();
-  socket.onOpen(() => {
-    isConnected = true;
-    channel = joinChannel(socket);
-    presence = new Phoenix.Presence(channel);
-    presence.onSync(handlePresence);
-  });
-  socket.onClose(() => (isConnected = false));
-  socket.onError((e) => (isConnected = false));
+  connectSocketAndJoinChannel();
 });
 
 // alarms
@@ -33,7 +25,7 @@ browser.alarms.create("sync-tabs", {
 // handle alarm
 browser.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "check-connection") {
-    isConnected = socket.isConnected();
+    if (socket) isConnected = socket.isConnected();
     console.log({ isConnected });
   } else if (alarm.name === "sync-tabs") {
     // handle the state where socket isn't connected(edge case) before the status is updated
@@ -57,6 +49,8 @@ browser.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
       return bookmarkCurrentTab();
     case "get-connected-clients":
       return getConnectedClients();
+    case "socket-connection":
+      return toggleConnection();
   }
 });
 
@@ -65,6 +59,8 @@ function returnSocketState() {
 }
 
 function handleGetTabs() {
+  if (!isConnected) return;
+
   channel
     .push("get-tabs", {})
     .receive("ok", (payload) => sendMessage("tabs-response", payload))
@@ -75,7 +71,7 @@ function handleGetTabs() {
 async function bookmarkCurrentTab() {
   const messageType = "bookmark-response";
   const tab = await getCurrentTab();
-  if (tab) {
+  if (tab && isConnected) {
     channel
       .push("bookmark-tab", { url: tab.url, title: tab.title })
       .receive("ok", (data) => {
@@ -92,13 +88,42 @@ async function bookmarkCurrentTab() {
 }
 
 function getConnectedClients() {
+  if (!presence) return;
   const [presenceData] = presence.list();
   if (presenceData) {
     sendMessage("connected-clients", presenceData.metas);
   }
 }
 
+function toggleConnection() {
+  if (isConnected) {
+    socket.disconnect();
+    socket = null;
+    channel = null;
+    presence = null;
+    isConnected = false;
+  } else {
+    connectSocketAndJoinChannel();
+  }
+}
+
 ///////// helpers
+
+function connectSocketAndJoinChannel() {
+  socket = connectSocket();
+  socket.onOpen(() => {
+    isConnected = true;
+    channel = joinChannel(socket);
+    presence = new Phoenix.Presence(channel);
+    presence.onSync((_presences) => {});
+  });
+  socket.onClose(() => {
+    isConnected = false;
+  });
+  socket.onError((e) => {
+    isConnected = false;
+  });
+}
 
 function connectSocket() {
   const socket = new Phoenix.Socket("wss://localhost:4001/extension");
@@ -122,13 +147,8 @@ function joinChannel(socket) {
   return channel;
 }
 
-function handlePresence() {
-  presence.list((id, metas) => {
-    console.log(id, metas);
-  });
-}
-
 // tabs
+
 async function getTabs() {
   let tabs = await browser.tabs.query({ windowType: "normal" });
   tabs = filterAndTransformTabs(tabs);

@@ -20,8 +20,7 @@
       text-decoration: underline;
     }
 
-    #bookmark-button,
-    .tab-button {
+    .btn {
       background-color: transparent;
       font-family: inherit;
       font-size: 14px;
@@ -32,8 +31,7 @@
       margin-top: 10px;
     }
 
-    #bookmark-button:hover,
-    .tab-button:hover {
+    .btn:hover {
       opacity: 0.8;
     }
 
@@ -79,9 +77,12 @@
   </style>
   <body>
     <p class="heading">phoenix.aayushsahu.com</p>
-    <p style="font-size: 14px">
+    <p style="font-size: 14px; margin: 0">
       isConnected? <span id="socket-connection-state">false</span>
     </p>
+    <button class="btn" style="margin-bottom: 10px" id="connection-button">
+      disconnect
+    </button>
 
     <div id="clients-container">
       <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px">
@@ -91,8 +92,8 @@
     </div>
 
     <div>
-      <button class="tab-button" id="qa-button">quick access</button>
-      <button class="tab-button" id="tabs-button">tabs</button>
+      <button class="btn" id="qa-button">quick access</button>
+      <button class="btn" id="tabs-button">tabs</button>
     </div>
 
     <div id="quick-access">
@@ -133,7 +134,7 @@
       <div id="tabs-container"></div>
     </div>
 
-    <button id="bookmark-button" style="margin-bottom: 20px">
+    <button id="bookmark-button" class="btn" style="margin-bottom: 20px">
       bookmark current tab
     </button>
 
