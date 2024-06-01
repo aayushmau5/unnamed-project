@@ -55,6 +55,8 @@ browser.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
       return handleGetTabs();
     case "bookmark-current-tab":
       return bookmarkCurrentTab();
+    case "get-connected-clients":
+      return getConnectedClients();
   }
 });
 
@@ -86,6 +88,13 @@ async function bookmarkCurrentTab() {
       });
   } else {
     sendMessage(messageType, false);
+  }
+}
+
+function getConnectedClients() {
+  const [presenceData] = presence.list();
+  if (presenceData) {
+    sendMessage("connected-clients", presenceData.metas);
   }
 }
 

@@ -17,8 +17,14 @@
 
 - merge into one extension codebase
 - dictate socket connect/disconnect through main.js
-- add to intersting link(or maybe categories?)
-- context menu entry
+  - efficiency. don't keep sending tabs all the time?
+- ~~show connected clients~~
+- ~~add to intersting link(or maybe categories?)~~
+  - Liveview: UI to show the links
+- context menu entry(https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/user_interface/Context_menu_items)
   - future idea: paragraph bookmarks
-- quick access(pretty easy).
-- tabs(quick access, cross-browser sync, scribble?)
+- ~~quick access(pretty easy).~~
+- ~~tabs(quick access, cross-browser sync, scribble?)~~
+- ~~styling fixes(fixed width, height, scorllable, etc.)~~
+- enable check-origin for extension socket only
+- build step for each browser with fixed id(.env)

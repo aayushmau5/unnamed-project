@@ -11,16 +11,20 @@
       background-color: #1f1f1f;
       font-family: "Input", monospace;
       color: white;
+      width: 400px;
+      height: 500px;
+      overflow-x: hidden;
     }
 
     .heading {
       text-decoration: underline;
     }
 
-    #bookmark-button {
+    #bookmark-button,
+    .tab-button {
       background-color: transparent;
       font-family: inherit;
-      font-size: 12px;
+      font-size: 14px;
       padding: 4px;
       color: white;
       border: 1px solid white;
@@ -28,40 +32,111 @@
       margin-top: 10px;
     }
 
-    #bookmark-button:hover {
+    #bookmark-button:hover,
+    .tab-button:hover {
       opacity: 0.8;
     }
 
     #tabs-container ul > li {
       margin: 10px 0;
+      margin-left: -20px;
     }
 
     #tabs-container a {
       color: white;
       text-decoration: none;
       font-size: 14px;
+      word-wrap: break-word;
     }
 
     #tabs-container a:hover {
       opacity: 0.8;
     }
+
+    #quick-access {
+      margin: 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .qa-link {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .qa-link:hover {
+      opacity: 0.8;
+    }
+
+    #connected-clients {
+      padding: 0;
+      margin: 0;
+      margin-left: 20px;
+      font-size: 14px;
+    }
   </style>
   <body>
     <p class="heading">phoenix.aayushsahu.com</p>
-    <p>isConnected? <span id="socket-connection-state">false</span></p>
-    <div id="response"></div>
-    <p
-      style="
-        font-weight: bold;
-        font-size: 16px;
-        padding-bottom: 5px;
-        border-bottom: 1px solid gray;
-      "
-    >
-      Tabs
+    <p style="font-size: 14px">
+      isConnected? <span id="socket-connection-state">false</span>
     </p>
-    <div id="tabs-container"></div>
-    <button id="bookmark-button">bookmark current tab</button>
+
+    <div id="clients-container">
+      <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px">
+        Connected clients:
+      </div>
+      <ul id="connected-clients"></ul>
+    </div>
+
+    <div>
+      <button class="tab-button" id="qa-button">quick access</button>
+      <button class="tab-button" id="tabs-button">tabs</button>
+    </div>
+
+    <div id="quick-access">
+      <a class="qa-link" href="https://phoenix.aayushsahu.com/" target="_blank"
+        >home</a
+      >
+      <a
+        class="qa-link"
+        href="https://phoenix.aayushsahu.com/notes"
+        target="_blank"
+        >notes</a
+      >
+      <a
+        class="qa-link"
+        href="https://phoenix.aayushsahu.com/dashboard"
+        target="_blank"
+        >dashboard</a
+      >
+      <a
+        class="qa-link"
+        href="https://phoenix.aayushsahu.com/bin"
+        target="_blank"
+        >livebin</a
+      >
+    </div>
+
+    <div id="tabs-parent" style="display: none">
+      <p
+        style="
+          font-weight: bold;
+          font-size: 16px;
+          padding-bottom: 5px;
+          border-bottom: 1px solid gray;
+        "
+      >
+        Tabs
+      </p>
+      <div id="tabs-container"></div>
+    </div>
+
+    <button id="bookmark-button" style="margin-bottom: 20px">
+      bookmark current tab
+    </button>
+
     <script src="scripts/main.js"></script>
   </body>
 </html>

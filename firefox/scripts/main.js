@@ -3,6 +3,11 @@ const socketConnectionStatusContainer = document.getElementById(
 );
 const bookmarkButton = document.getElementById("bookmark-button");
 const tabsContainer = document.getElementById("tabs-container");
+const qaButton = document.getElementById("qa-button");
+const qaContainer = document.getElementById("quick-access");
+const tabsButton = document.getElementById("tabs-button");
+const tabsParent = document.getElementById("tabs-parent");
+const clientsUl = document.getElementById("connected-clients");
 
 init();
 initMessageHandler();
@@ -17,6 +22,16 @@ async function init() {
   bookmarkButton.addEventListener("click", () => {
     sendMessage("bookmark-current-tab");
   });
+
+  qaButton.addEventListener("click", () => {
+    qaContainer.style = "display: flex;";
+    tabsParent.style = "display: none;";
+  });
+
+  tabsButton.addEventListener("click", () => {
+    qaContainer.style = "display: none;";
+    tabsParent.style = "display: block;";
+  });
 }
 
 function initMessageHandler() {
@@ -30,8 +45,8 @@ function initMessageHandler() {
         return handleBookmarkResponse(payload);
       case "connection-state":
         return handleConnectionState(payload);
-      default:
-        console.log("default: ", type);
+      case "connected-clients":
+        return showConnectedClients(payload);
     }
   });
 }
@@ -58,9 +73,27 @@ function handleConnectionState(payload) {
     : false;
 }
 
+function showConnectedClients(payload) {
+  clientsUl.innerHTML = "";
+  payload
+    .map((meta) => ({
+      browser: meta.browser,
+      id: meta.id,
+    }))
+    .map((client) => {
+      const li = document.createElement("li");
+      li.innerText = `${client.browser} - ${client.id}`;
+      clientsUl.appendChild(li);
+    });
+}
+
 function runTimer() {
   setInterval(function () {
     sendMessage("get-tabs");
+  }, 2000);
+
+  setInterval(function () {
+    sendMessage("get-connected-clients");
   }, 2000);
 }
 
