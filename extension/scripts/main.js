@@ -40,7 +40,7 @@ async function init() {
 }
 
 function initMessageHandler() {
-  browser.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
+  chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
     const { type, payload } = message;
     switch (type) {
       case "tabs-response":
@@ -108,7 +108,7 @@ function runTimer() {
 }
 
 function sendMessage(type, payload = {}) {
-  return browser.runtime.sendMessage({
+  return chrome.runtime.sendMessage({
     type,
     payload,
   });

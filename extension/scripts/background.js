@@ -1,3 +1,10 @@
+if (
+  typeof self === "object" &&
+  self.constructor.name === "ServiceWorkerGlobalScope"
+) {
+  importScripts("phoenix.min.js");
+}
+
 let socket = null;
 let channel = null;
 let presence = null;
@@ -5,25 +12,25 @@ let isConnected = false;
 let browserId = null;
 
 // on init
-browser.runtime.onInstalled.addListener(async () => {
-  const info = await browser.runtime.getPlatformInfo();
+chrome.runtime.onInstalled.addListener(async () => {
+  const info = await chrome.runtime.getPlatformInfo();
   browserId = `firefox_${info.os}`;
   connectSocketAndJoinChannel();
 });
 
 // alarms
-browser.alarms.create("check-connection", {
+chrome.alarms.create("check-connection", {
   delayInMinutes: 0.1,
   periodInMinutes: 0.1,
 });
 
-browser.alarms.create("sync-tabs", {
+chrome.alarms.create("sync-tabs", {
   delayInMinutes: 0,
   periodInMinutes: 0.2,
 });
 
 // handle alarm
-browser.alarms.onAlarm.addListener((alarm) => {
+chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "check-connection") {
     if (socket) isConnected = socket.isConnected();
     console.log({ isConnected });
@@ -38,7 +45,7 @@ browser.alarms.onAlarm.addListener((alarm) => {
 });
 
 // handle messages from main/foreground script
-browser.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
   const { type, _response } = message;
   switch (type) {
     case "get-socket-state":
@@ -150,7 +157,7 @@ function joinChannel(socket) {
 // tabs
 
 async function getTabs() {
-  let tabs = await browser.tabs.query({ windowType: "normal" });
+  let tabs = await chrome.tabs.query({ windowType: "normal" });
   tabs = filterAndTransformTabs(tabs);
   return tabs;
 }
@@ -162,7 +169,7 @@ function filterAndTransformTabs(tabs) {
 }
 
 async function getCurrentTab() {
-  const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
   if (tabs.length > 0 && tabs[0].url.startsWith("http")) {
     return tabs[0];
   } else {
@@ -171,5 +178,5 @@ async function getCurrentTab() {
 }
 
 function sendMessage(type, payload = {}) {
-  return browser.runtime.sendMessage({ type, payload });
+  return chrome.runtime.sendMessage({ type, payload });
 }
