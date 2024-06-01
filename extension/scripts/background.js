@@ -11,10 +11,12 @@ let presence = null;
 let isConnected = false;
 let browserId = null;
 
+const browserName = "<browser_placeholder>";
+
 // on init
 chrome.runtime.onInstalled.addListener(async () => {
   const info = await chrome.runtime.getPlatformInfo();
-  browserId = `firefox_${info.os}`;
+  browserId = `${browserName}_${info.os}`;
   connectSocketAndJoinChannel();
 });
 
@@ -140,7 +142,7 @@ function connectSocket() {
 
 function joinChannel(socket) {
   const channel = socket.channel("extension", {
-    browser: "firefox",
+    browser: browserName,
     id: browserId,
   });
 

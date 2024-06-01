@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:firefox": "web-ext run --source-dir ../extension/"
+    "start:firefox": "web-ext run --source-dir ../extension/",
+    "dev": "node index.js"
   },
   "author": "",
   "license": "ISC",
