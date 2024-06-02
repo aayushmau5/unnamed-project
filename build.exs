@@ -2,26 +2,32 @@
 
 defmodule Build do
   def run() do
+    builds_dir = create_or_replace_builds_dir()
+
     ["firefox", "brave", "chrome"]
-    |> Enum.each(&build_for/1)
+    |> Enum.each(&(build_for(&1, builds_dir)))
+
+    IO.inspect("Build finished!")
   end
 
-  defp build_for(browser) do
-    Path.join([File.cwd!(), "#{browser}-build"])
-    |> create_temp_dir()
+  defp build_for(browser, builds_dir) do
+    Path.join([builds_dir, "#{browser}-build"])
+    |> create_dir()
     |> copy_build_files()
     |> replace_placeholder(browser)
-    |> zip_dir()
-    |> delete_temp_dir()
   end
 
-  defp create_temp_dir(dir) do
+  def create_or_replace_builds_dir() do
+    path = Path.join([File.cwd!(), "builds"])
+    if File.exists?(path), do: File.rm_rf!(path)
+    File.mkdir!(path)
+
+    path
+  end
+
+  defp create_dir(dir) do
     File.mkdir!(dir)
     dir
-  end
-
-  defp delete_temp_dir(path) do
-    File.rm_rf!(path)
   end
 
   defp copy_build_files(dir) do
@@ -40,11 +46,6 @@ defmodule Build do
 
     File.write!(background_file_path, new_content)
 
-    dir
-  end
-
-  defp zip_dir(dir) do
-    {_, 0} = System.cmd("zip", ["-r", "#{dir}.zip", dir])
     dir
   end
 end
