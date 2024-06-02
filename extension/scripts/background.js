@@ -135,7 +135,9 @@ function connectSocketAndJoinChannel() {
 }
 
 function connectSocket() {
-  const socket = new Phoenix.Socket("wss://localhost:4001/extension");
+  // Local: "wss://localhost:4001/extension"
+  // Hosted: "wss://phoenix.aayushsahu.com/extension"
+  const socket = new Phoenix.Socket("wss://phoenix.aayushsahu.com/extension");
   socket.connect();
   return socket;
 }
