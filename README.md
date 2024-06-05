@@ -1,5 +1,11 @@
 # unnamed-extension
 
+this is a browser extension(for firefox, chrome & brave) for my own personal usage.
+
+Right now, it syncs tabs between different browser using [my phoenix server](https://github.com/aayushmau5/phoenix.aayushsahu.com). It is meant to be much for than a cross browser tab syncer.
+
+**Note:** It's quite hard/impossible to package and install an extension locally(i had some success with firefox using `web-ext` but not with chrome/brave). Thus, until some solution comes up, this project has been put on hold.
+
 ## TODOs
 
 - Liveview: UI to show the links
